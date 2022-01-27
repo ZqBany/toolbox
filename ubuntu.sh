@@ -23,13 +23,24 @@ function rootLevelInstallations {
     # update
     apt update
 
-		# console file editor
+    # console file editor
     apt install vim
+    
+    # install z shell
+    apt install zsh
+    apt install powerline fonts-powerline
+    
+        
+    # change shell to zsh
+    chsh -s $(which zsh) ${__username}
+   
+    # install tree directories command
+    apt install tree
 
     # kitty terminal
     apt install kitty
 
-		# info about computer components
+    # info about computer components
     apt install hwinfo
 
     # command line network
@@ -46,9 +57,6 @@ function rootLevelInstallations {
 
     # install snaps
     apt install snapd
-
-    # ls on steroids
-    snap install lsd
 
     # visual studio code
     snap install code --classic
@@ -73,14 +81,17 @@ function userLevelInstallations {
 
     readonly __NVM_VER="v0.39.1"
     
+    # z shell configuration managero
+    curl -fsS "https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh" | bash
+    
     # sdkman - tool for multiple java / gradle etc. versions
-    curl -s "https://get.sdkman.io" | bash
+    curl -fsS "https://get.sdkman.io" | bash
     source "${HOME}/.sdkman/bin/sdkman-init.sh"
     sdk install java
     sdk install gradle
 
     # Node Version Manager
-    curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/${__NVM_VER}/install.sh | bash
+    curl -fsS "https://raw.githubusercontent.com/nvm-sh/nvm/${__NVM_VER}/install.sh" | bash
     [ -s "${HOME}/.nvm/nvm.sh" ] && \. "${HOME}/.nvm/nvm.sh"  # This loads nvm
     nvm install node
     nvm alias default node
