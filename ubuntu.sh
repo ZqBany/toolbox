@@ -3,7 +3,7 @@
 # Script for installing various tools I use on fresh ubuntu
 # Run as 
 # 
-#    curl -fsS "https://raw.githubusercontent.com/zqbany/toolbox/main/ubuntu.sh" | bash
+#    apt install -y curl && curl -fsS "https://raw.githubusercontent.com/zqbany/toolbox/main/ubuntu.sh" | bash
 #
 set -o errexit
 set -o nounset
@@ -11,13 +11,8 @@ set -o pipefail
 # Uncomment for debugging
 # set -o xtrace
 
-readonly __dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-readonly __file="${__dir}/$(basename "${BASH_SOURCE[0]}")"
-readonly __base="$(basename ${__file} .sh)"
-
 readonly __username="$(whoami)"
 
-pushd "${__dir}" 
 echo "Username: ${__username}"
 
 function rootLevelInstallations {
@@ -109,5 +104,3 @@ function userLevelInstallations {
 
 sudo bash -c "$(declare -f rootLevelInstallations); rootLevelInstallations"
 userLevelInstallations
-
-popd # __dir
