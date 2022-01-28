@@ -3,7 +3,7 @@
 # Script for installing various tools I use on fresh ubuntu
 # Run as 
 # 
-#    sudo apt install -y curl && curl -fsS "https://raw.githubusercontent.com/zqbany/toolbox/main/ubuntu.sh" | sh
+#    sudo apt install -y curl && curl -fsS "https://raw.githubusercontent.com/zqbany/toolbox/main/ubuntu.sh" | bash
 #
 set -o errexit
 set -o nounset
@@ -25,7 +25,7 @@ function rootLevelInstallations {
     apt install -y vim
     
     # install z shell
-    apt install -y  zsh
+    apt install -y zsh
     apt install -y powerline fonts-powerline
         
     # change shell to zsh
@@ -83,28 +83,27 @@ function userLevelInstallations {
     readonly __NVM_VER="v0.39.1"
     
     # z shell configuration managero
-    curl -fsS "https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh" | sh
+    curl -fsS "https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh" | bash
     
     # sdkman - tool for multiple java / gradle etc. versions
-    curl -fsS "https://get.sdkman.io" | sh
-    sleep 1
+    curl -fsS "https://get.sdkman.io" | bash
     source "${HOME}/.sdkman/bin/sdkman-init.sh"
+    sdk version
     sdk install java
     sdk install gradle
 
     # Node Version Manager
-    curl -fsS "https://raw.githubusercontent.com/nvm-sh/nvm/${__NVM_VER}/install.sh" | sh
-    sleep 1
+    curl -fsS "https://raw.githubusercontent.com/nvm-sh/nvm/${__NVM_VER}/install.sh" | bash
     [ -s "${HOME}/.nvm/nvm.sh" ] && \. "${HOME}/.nvm/nvm.sh"  # This loads nvm
     nvm install node
     nvm alias default node
     
     # Rootless docker
-    curl -fsS https://get.docker.com/rootless | sh
+    curl -fsS https://get.docker.com/rootless | bash
 }
 
 
 sudo bash -c "$(declare -f rootLevelInstallations); rootLevelInstallations"
-userLevelInstallations
+zsh -c "$(declare -f userLevelInstallations); userLevelInstallations"
 echo ""
 echo "Seems script worked as intended"
