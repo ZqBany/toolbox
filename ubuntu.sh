@@ -2,7 +2,8 @@
 #
 # Script for installing various tools I use on fresh ubuntu
 # Run as 
-# ./ubuntu.sh `whoami`
+# 
+#    curl -fsS "https://raw.githubusercontent.com/zqbany/toolbox/main/ubuntu.sh" | bash
 #
 set -o errexit
 set -o nounset
@@ -14,7 +15,7 @@ readonly __dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 readonly __file="${__dir}/$(basename "${BASH_SOURCE[0]}")"
 readonly __base="$(basename ${__file} .sh)"
 
-readonly __username="$1"
+readonly __username="$(whoami)"
 
 pushd "${__dir}" 
 echo "Username: ${__username}"
@@ -26,38 +27,38 @@ function rootLevelInstallations {
     apt update
 
     # console file editor
-    apt install vim
+    apt install -y vim
     
     # install z shell
-    apt install zsh
-    apt install powerline fonts-powerline
+    apt install -y  zsh
+    apt install -y powerline fonts-powerline
         
     # change shell to zsh
     chsh -s $(which zsh) ${__username}
    
     # install tree directories command
-    apt install tree
+    apt install -y tree
 
     # kitty terminal
-    apt install kitty
+    apt install -y kitty
 
     # info about computer components
-    apt install hwinfo
+    apt install -y hwinfo
 
     # command line network
-    apt install curl
+    apt install -y curl
 
     # json parser & formatter
-    apt install jq
+    apt install -y jq
 
     # git
-    apt install git
+    apt install -y git
 
     # commandline visual git
-    apt install tig
+    apt install -y tig
 
     # install snaps
-    apt install snapd
+    apt install -y snapd
 
     # visual studio code
     snap install code --classic
@@ -78,7 +79,7 @@ function rootLevelInstallations {
     snap install slack --classic
     
     # For docker rootless install
-    apt-get install -y uidmap
+    apt install -y uidmap
 }
 
 function userLevelInstallations {
