@@ -2,7 +2,7 @@
 #
 # Script for installing various tools I use on fresh ubuntu
 # Run as 
-# sudo ./ubuntu.sh `whoami`
+# ./ubuntu.sh `whoami`
 #
 set -o errexit
 set -o nounset
@@ -20,6 +20,8 @@ pushd "${__dir}"
 echo "Username: ${__username}"
 
 function rootLevelInstallations {
+    echo "Performing root level as $(whoami)"
+
     # update
     apt update
 
@@ -29,7 +31,6 @@ function rootLevelInstallations {
     # install z shell
     apt install zsh
     apt install powerline fonts-powerline
-    
         
     # change shell to zsh
     chsh -s $(which zsh) ${__username}
@@ -75,9 +76,13 @@ function rootLevelInstallations {
 
     # slack
     snap install slack --classic
+    
+    # For docker rootless install
+    apt-get install -y uidmap
 }
 
 function userLevelInstallations {
+    echo "Performing user level as $(whoami)"
 
     readonly __NVM_VER="v0.39.1"
     
@@ -95,11 +100,13 @@ function userLevelInstallations {
     [ -s "${HOME}/.nvm/nvm.sh" ] && \. "${HOME}/.nvm/nvm.sh"  # This loads nvm
     nvm install node
     nvm alias default node
+    
+    # Rootless docker
+    curl -fsS https://get.docker.com/rootless | bash
 }
 
-export -f userLevelInstallations
 
-rootLevelInstallations
-su "${__username}" -c "bash -c userLevelInstallations"
+sudo bash -c "$(declare -f rootLevelInstallations); rootLevelInstallations"
+userLevelInstallations
 
 popd # __dir
