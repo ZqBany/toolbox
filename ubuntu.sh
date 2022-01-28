@@ -106,3 +106,5 @@ function userLevelInstallations {
 
 sudo bash -c "$(declare -f rootLevelInstallations); rootLevelInstallations"
 userLevelInstallations
+echo ""
+echo "Seems script worked as intended"
