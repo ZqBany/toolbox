@@ -3,7 +3,7 @@
 # Script for installing various tools I use on fresh ubuntu
 # Run as 
 # 
-#    apt install -y curl && curl -fsS "https://raw.githubusercontent.com/zqbany/toolbox/main/ubuntu.sh" | bash
+#    sudo apt install -y curl && curl -fsS "https://raw.githubusercontent.com/zqbany/toolbox/main/ubuntu.sh" | sh
 #
 set -o errexit
 set -o nounset
@@ -83,22 +83,24 @@ function userLevelInstallations {
     readonly __NVM_VER="v0.39.1"
     
     # z shell configuration managero
-    curl -fsS "https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh" | bash
+    curl -fsS "https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh" | sh
     
     # sdkman - tool for multiple java / gradle etc. versions
-    curl -fsS "https://get.sdkman.io" | bash
+    curl -fsS "https://get.sdkman.io" | sh
+    sleep 1
     source "${HOME}/.sdkman/bin/sdkman-init.sh"
     sdk install java
     sdk install gradle
 
     # Node Version Manager
-    curl -fsS "https://raw.githubusercontent.com/nvm-sh/nvm/${__NVM_VER}/install.sh" | bash
+    curl -fsS "https://raw.githubusercontent.com/nvm-sh/nvm/${__NVM_VER}/install.sh" | sh
+    sleep 1
     [ -s "${HOME}/.nvm/nvm.sh" ] && \. "${HOME}/.nvm/nvm.sh"  # This loads nvm
     nvm install node
     nvm alias default node
     
     # Rootless docker
-    curl -fsS https://get.docker.com/rootless | bash
+    curl -fsS https://get.docker.com/rootless | sh
 }
 
 
