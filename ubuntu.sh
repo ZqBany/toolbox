@@ -88,23 +88,23 @@ function userLevelInstallations {
     readonly __NVM_VER="v0.39.1"
     
     # z shell configuration managero
-    curl -fsS "https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh" | bash
+    curl -fsS "https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh" | zsh
     
     # sdkman - tool for multiple java / gradle etc. versions
-    curl -fsS "https://get.sdkman.io" | bash
+    curl -fsS "https://get.sdkman.io" | zsh
     source "${HOME}/.sdkman/bin/sdkman-init.sh"
     sdk version
     sdk install java
     sdk install gradle
 
     # Node Version Manager
-    curl -fsS "https://raw.githubusercontent.com/nvm-sh/nvm/${__NVM_VER}/install.sh" | bash
+    curl -fsS "https://raw.githubusercontent.com/nvm-sh/nvm/${__NVM_VER}/install.sh" | zsh
     [ -s "${HOME}/.nvm/nvm.sh" ] && \. "${HOME}/.nvm/nvm.sh"  # This loads nvm
     nvm install node
     nvm alias default node
     
     # Rootless docker
-    curl -fsS https://get.docker.com/rootless | bash
+    curl -fsS https://get.docker.com/rootless | zsh
 }
 
 
