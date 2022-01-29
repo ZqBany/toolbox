@@ -18,8 +18,9 @@ echo "Username: ${__username}"
 function rootLevelInstallations {
     echo "Performing root level as $(whoami)"
 
-    # update
+    # update & upgrade
     apt update
+    apt -y upgrade
 
     # console file editor
     apt install -y vim
@@ -54,6 +55,7 @@ function rootLevelInstallations {
 
     # install snaps
     apt install -y snapd
+    apt install -y gnome-software-plugin-snap
 
     # visual studio code
     snap install code --classic
@@ -75,6 +77,9 @@ function rootLevelInstallations {
     
     # For docker rootless install
     apt install -y uidmap
+    
+    # Clean the mess
+    apt -y autoremove
 }
 
 function userLevelInstallations {
