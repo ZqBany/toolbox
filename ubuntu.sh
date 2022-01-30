@@ -89,6 +89,7 @@ function userLevelInstallations {
     
     # z shell configuration managero
     curl -fsS "https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh" | zsh
+    source ~/.zshrc
     
     # sdkman - tool for multiple java / gradle etc. versions
     curl -fsS "https://get.sdkman.io" | zsh
@@ -105,10 +106,12 @@ function userLevelInstallations {
     
     # Rootless docker
     curl -fsS https://get.docker.com/rootless | zsh
+    source ~/.zshrc
+    # TODO add docker host to zshrc by cli
 }
 
 
 sudo bash -c "$(declare -f rootLevelInstallations); rootLevelInstallations"
 zsh -c "$(declare -f userLevelInstallations); userLevelInstallations"
 echo ""
-echo "Seems script worked as intended"
+echo "Seems script worked as intended. Export docker host var to your ~/.zshrc as seen above"
