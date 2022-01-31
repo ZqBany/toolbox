@@ -21,16 +21,15 @@ function rootLevelInstallations {
     # update & upgrade
     apt update
     apt -y upgrade
+    
+    # ensure build essential is present
+    apt install build-essential
 
     # console file editor
     apt install -y vim
     
-    # install z shell
-    apt install -y zsh
+    # install powerline
     apt install -y powerline fonts-powerline
-        
-    # change shell to zsh
-    chsh -s $(which zsh) ${__username}
    
     # install tree directories command
     apt install -y tree
@@ -87,31 +86,42 @@ function userLevelInstallations {
 
     readonly __NVM_VER="v0.39.1"
     
-    # z shell configuration managero
-    curl -fsS "https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh" | zsh
-    source ~/.zshrc
-    
     # sdkman - tool for multiple java / gradle etc. versions
-    curl -fsS "https://get.sdkman.io" | zsh
+    curl -fsS "https://get.sdkman.io" | bash
     source "${HOME}/.sdkman/bin/sdkman-init.sh"
     sdk version
     sdk install java
     sdk install gradle
 
+    # Homebrew
+    curl -fsS "https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh" | bash
+    eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
+    
+    # Mongo cli
+    brew install mongosh
+    
     # Node Version Manager
-    curl -fsS "https://raw.githubusercontent.com/nvm-sh/nvm/${__NVM_VER}/install.sh" | zsh
-    [ -s "${HOME}/.nvm/nvm.sh" ] && \. "${HOME}/.nvm/nvm.sh"  # This loads nvm
+    brew install nvm
     nvm install node
     nvm alias default node
     
     # Rootless docker
-    curl -fsS https://get.docker.com/rootless | zsh
-    source ~/.zshrc
+    curl -fsS https://get.docker.com/rootless | bash
     # TODO add docker host to zshrc by cli
+    
+    # Install zsh
+    brew install zsh
+    
+    # z shell configuration managero
+    curl -fsS "https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh" | bash
 }
 
-
+# Install stuff
 sudo bash -c "$(declare -f rootLevelInstallations); rootLevelInstallations"
-zsh -c "$(declare -f userLevelInstallations); userLevelInstallations"
+userLevelInstallations
+
+# Change shell to zsh
+sudo chsh -s $(which zsh) ${__username}
+    
 echo ""
-echo "Seems script worked as intended. Export docker host var to your ~/.zshrc as seen above"
+echo "Seems script worked as intended. Export brew host and docker host var to your ~/.zshrc as seen above"
