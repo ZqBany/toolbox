@@ -42,6 +42,7 @@ function rootLevelInstallations {
 
     # command line network
     apt install -y curl
+    apt install -y httpie
 
     # json parser & formatter
     apt install -y jq
