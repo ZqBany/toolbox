@@ -12,117 +12,176 @@ set -o pipefail
 # set -o xtrace
 
 readonly __username="$(whoami)"
+readonly __user_progress_helper="${HOME}/.ubuntu_installation_script_progress_user"
+declare -i current_processed=0
+declare -i ever_processed=0
+current_progress_filename=""
 
 echo "Username: ${__username}"
 
-function rootLevelInstallations {
-    echo "Performing root level as $(whoami)"
 
+function process {
+    if [ "${current_processed}" -ge "${ever_processed}" ]; then
+        "$@"
+        ever_processed=$((ever_processed+1))
+        echo "${ever_processed}" > ${current_progress_filename}
+    else
+        echo "#${current_processed} skipping $@"
+    fi
+    current_processed=$((current_processed+1))
+}
+
+function rootLevelInstallations {
+    readonly __admin_progress_helper="${HOME}/.ubuntu_installation_script_progress_admin"
+
+    echo "Performing root level as $(whoami)"
+    
+    current_processed=0
+    ever_processed=0
+    current_progress_filename="${__admin_progress_helper}"
+    echo "Current file: ${__admin_progress_helper}"
+    [ -s "${current_progress_filename}" ] && declare -i ever_processed=$(cat ${current_progress_filename})
+    
     # update & upgrade
-    apt update
-    apt -y upgrade
+    process apt update
+    process apt -y upgrade
     
     # ensure build essential is present
-    apt install build-essential
+    process apt install build-essential
 
     # console file editor
-    apt install -y vim
+    process apt install -y vim
     
     # install powerline
-    apt install -y powerline fonts-powerline
+    process apt install -y powerline fonts-powerline
    
     # install tree directories command
-    apt install -y tree
+    process apt install -y tree
 
     # kitty terminal
-    apt install -y kitty
+    process apt install -y kitty
 
     # info about computer components
-    apt install -y hwinfo
+    process apt install -y hwinfo
 
     # command line network
-    apt install -y curl
-    apt install -y httpie
+    process apt install -y curl
+    process apt install -y httpie
 
     # json parser & formatter
-    apt install -y jq
+    process apt install -y jq
 
     # git
-    apt install -y git
+    process apt install -y git
 
     # commandline visual git
-    apt install -y tig
+    process apt install -y tig
 
     # install snaps
-    apt install -y snapd
-    apt install -y gnome-software-plugin-snap
+    process apt install -y snapd
+    process apt install -y gnome-software-plugin-snap
 
     # visual studio code
-    snap install code --classic
+    process snap install code --classic
 
     # strechly - reminders about moving your ass from keyboard
-    snap install stretchly
+    process snap install stretchly
 
     # IntelliJ IDEA Comminuty
-    snap install intellij-idea-community --classic
+    process snap install intellij-idea-community --classic
 
     # rest client
-    snap install insomnia
+    process snap install insomnia
 
     # keepass XC - password manager
-    snap install keepassxc
+    process snap install keepassxc
 
     # slack
-    snap install slack --classic
+    process snap install slack --classic
     
     # For docker rootless install
-    apt install -y uidmap
+    process apt install -y uidmap
     
     # Clean the mess
-    apt -y autoremove
+    process apt -y autoremove
+}
+
+function installSdkMan {
+    curl -fsS "https://get.sdkman.io" | bash
+    set +o nounset
+    source "${HOME}/.sdkman/bin/sdkman-init.sh"
+    set -o nounset
+}
+
+function installHomebrew {
+    curl -fsS "https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh" | bash
+    set +o nounset
+    (echo; echo 'eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"') >> ${HOME}/.profile
+    eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
+    set -o nounset
+}
+
+function installNvm {
+    brew install nvm
+    mkdir ${HOME}/.nvm
+    (echo; echo 'export NVM_DIR="$HOME/.nvm"') >> ${HOME}/.profile
+    (echo; echo '[ -s "/home/linuxbrew/.linuxbrew/opt/nvm/nvm.sh" ] && \. "/home/linuxbrew/.linuxbrew/opt/nvm/nvm.sh"  # This loads nvm') >> ${HOME}/.profile
+    (echo; echo '[ -s "/home/linuxbrew/.linuxbrew/opt/nvm/etc/bash_completion.d/nvm" ] && \. "/home/linuxbrew/.linuxbrew/opt/nvm/etc/bash_completion.d/nvm"  # This loads nvm bash_completion') >> ${HOME}/.profile
+    source ${HOME}/.profile
+}
+
+function installDocker {
+    curl -fsS https://get.docker.com/rootless | bash
+    (echo; echo 'export PATH=/home/zqbany/bin:$PATH') >> ${HOME}/.profile
+    (echo; echo 'export DOCKER_HOST=unix:///run/user/1000/docker.sock') >> ${HOME}/.profile
+    source ${HOME}/.profile
+}
+
+function installOhMyZsh {
+    curl -fsS "https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh" | bash
 }
 
 function userLevelInstallations {
     echo "Performing user level as $(whoami)"
-
-    readonly __NVM_VER="v0.39.1"
+    
+    current_processed=0
+    ever_processed=0
+    current_progress_filename="${__user_progress_helper}"
+    [ -s "${current_progress_filename}" ] && ever_processed=$(cat ${current_progress_filename})
     
     # sdkman - tool for multiple java / gradle etc. versions
-    curl -fsS "https://get.sdkman.io" | bash
-    source "${HOME}/.sdkman/bin/sdkman-init.sh"
-    sdk version
-    sdk install java
-    sdk install gradle
+    process installSdkMan
+    process sdk version
+    process sdk install java
+    process sdk install gradle
 
     # Homebrew
-    curl -fsS "https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh" | bash
-    eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
+    process installHomebrew
     
     # Mongo cli
-    brew install mongosh
+    process brew install mongosh
     
     # Node Version Manager
-    brew install nvm
-    nvm install node
-    nvm alias default node
+    process installNvm
+    process nvm install node
+    process nvm alias default node
     
     # Rootless docker
-    curl -fsS https://get.docker.com/rootless | bash
-    # TODO add docker host to zshrc by cli
+    process installDocker
     
     # Install zsh
-    brew install zsh
+    process brew install zsh
     
     # z shell configuration managero
-    curl -fsS "https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh" | bash
+    process installOhMyZsh
 }
 
 # Install stuff
-sudo bash -c "$(declare -f rootLevelInstallations); rootLevelInstallations"
+sudo bash -c "$(declare -f rootLevelInstallations); $(declare -f process); rootLevelInstallations"
 userLevelInstallations
 
 # Change shell to zsh
-sudo chsh -s $(which zsh) ${__username}
+process sudo chsh -s $(which zsh) ${__username}
     
 echo ""
 echo "Seems script worked as intended. Export brew host and docker host var to your ~/.zshrc as seen above"
