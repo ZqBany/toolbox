@@ -1,0 +1,6 @@
+*.iso
+*.box
+*.ovf
+*.vmdk
+*.vdi
+virtualfloppy.vfd
