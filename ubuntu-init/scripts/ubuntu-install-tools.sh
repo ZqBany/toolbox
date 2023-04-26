@@ -3,7 +3,7 @@
 # Script for installing various tools I use on fresh ubuntu
 # Run as 
 # 
-#    sudo apt install -y curl && curl -fsS "https://raw.githubusercontent.com/zqbany/toolbox/main/ubuntu-init/ubuntu-install-tools.sh" | bash
+#    sudo apt install -y curl && curl -fsS "https://raw.githubusercontent.com/zqbany/toolbox/main/ubuntu-init/scripts/ubuntu-install-tools.sh" | bash
 #
 set -o errexit
 #set -o nounset // init files have unbound variables
